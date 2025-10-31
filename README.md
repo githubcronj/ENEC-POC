@@ -1,16 +1,11 @@
-# Dify Chatbot with Ant Design X
+# ENEC Policy and Procedure chatbot POC
 
 A modern, modular React TypeScript chatbot application that integrates **Ant Design X** with **Dify API** for AI-powered conversations with streaming support.
 
-## ✨ Features
+## 📖 Overview
 
-- 🎨 **Beautiful UI** - Built with Ant Design X for a modern chat interface
-- 🔄 **Streaming Responses** - Real-time streaming from Dify API
-- 💬 **Conversation Management** - Multiple conversations with history
-- 📝 **TypeScript** - Fully typed for better development experience
-- 🏗️ **Modular Architecture** - Well-organized component structure
-- 🎯 **Context Aware** - Maintains conversation history across messages
-- 🚀 **Fast Development** - Powered by Vite
+This project is a Proof of Concept for an AI-powered chatbot designed to assist users with ENEC policies and procedures.
+Built with cutting-edge technologies, it provides a seamless conversational experience with real-time streaming and conversation history management.
 
 ## 📁 Project Structure
 
