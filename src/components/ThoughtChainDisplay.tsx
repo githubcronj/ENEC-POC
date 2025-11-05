@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ThoughtChain } from '@ant-design/x';
 import type { ThoughtChainProps } from '@ant-design/x';
 import { CheckCircleOutlined, LoadingOutlined, CloseCircleOutlined, CrownOutlined } from '@ant-design/icons';
-import { Card, Typography, Button, Space, Divider } from 'antd';
+import { Card, Typography, Button, Divider } from 'antd';
 
 const { Text, Paragraph } = Typography;
 
@@ -34,14 +34,15 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const getStatusValue = (status: string): 'success' | 'error' | 'pending' | 'wait' => {
+const getStatusValue = (status: string): 'success' | 'error' | 'pending' => {
   switch (status) {
     case 'success':
       return 'success';
     case 'error':
       return 'error';
     case 'running':
-      return 'wait';
+    case 'wait':
+      return 'pending';
     default:
       return 'pending';
   }
@@ -101,12 +102,6 @@ const extractResponseSummary = (outputs?: Record<string, any>): string => {
   // Get first 80 chars of response
   const summary = text.substring(0, 80).trim();
   return summary + (text.length > 80 ? '...' : '');
-};
-
-// Extract query/input
-const extractQuery = (outputs?: Record<string, any>): string => {
-  if (!outputs?.['sys.query']) return '';
-  return outputs['sys.query'];
 };
 
 const NodeDetailContent: React.FC<{ node: WorkflowNode }> = ({ node }) => {
@@ -181,7 +176,7 @@ export const ThoughtChainDisplay: React.FC<ThoughtChainDisplayProps> = ({ nodes 
     }));
 
   // Only show thought chain if there are meaningful steps
-  if (  items.length === 0) {
+  if ( !items || items.length === 0) {
     return null;
   }
 
@@ -207,7 +202,7 @@ export const ThoughtChainDisplay: React.FC<ThoughtChainDisplayProps> = ({ nodes 
         }}
         onClick={() => setExpanded(!expanded)}
       >
-        <span>💭 Thinking Process ({items.length} steps)</span>
+        <span>💭 Thinking Process ({items?.length ?? 0} steps)</span>
         {expanded ? <CrownOutlined /> : <CrownOutlined />}
       </Button>
 

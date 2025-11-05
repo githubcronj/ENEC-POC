@@ -1,13 +1,12 @@
 // src/components/ChatSidebar.tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
-  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Conversations } from '@ant-design/x';
-import { Avatar, Button, message } from 'antd';
+import { Button, message } from 'antd';
 import type { ConversationItem } from '../types';
 import logo from '../assets/enec-logo.png';
 
@@ -18,6 +17,8 @@ interface ChatSidebarProps {
   onConversationChange: (key: string) => void;
   onNewConversation: () => void;
   onDeleteConversation: (key: string) => void;
+  messageHistory: Record<string, any[]>;
+  conversationDifyIds: Record<string, string>;
   styles: {
     sider: string;
     logo: string;
@@ -34,6 +35,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onConversationChange,
   onNewConversation,
   onDeleteConversation,
+  conversationDifyIds,
   styles,
 }) => {
   const handleNewConversation = () => {
@@ -52,6 +54,19 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     onDeleteConversation(key);
   };
 
+  // ------------------------------
+  // NEW: disable new conversation if ANY conversation is still "empty"
+  // A conversation is considered "empty/new" when it does NOT have a Dify conversation id
+  // (i.e., hasn't hit the backend yet).
+  // ------------------------------
+  const hasEmptyConversation = useMemo(
+    () => conversations.some((c) => !conversationDifyIds?.[c.key]),
+    [conversations, conversationDifyIds]
+  );
+
+  // disable "New Conversation" while a conversation exists that's not yet synced to Dify
+  const disableNewConversation = hasEmptyConversation;
+
   return (
     <div className={styles.sider}>
       {/* Logo */}
@@ -66,7 +81,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         type="link"
         className={styles.addBtn}
         icon={<PlusOutlined />}
-        disabled={isLoading}
+        disabled={disableNewConversation}
       >
         New Conversation
       </Button>
@@ -79,25 +94,31 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         onActiveChange={onConversationChange}
         groupable
         styles={{ item: { padding: '0 8px' } }}
-        menu={(conversation) => ({
-          items: [
-            {
-              label: 'Rename',
-              key: 'rename',
-              icon: <EditOutlined />,
-              onClick: () => message.info('Rename feature coming soon!'),
-            },
-            {
-              label: 'Delete',
-              key: 'delete',
-              icon: <DeleteOutlined />,
-              danger: true,
-              onClick: () => handleDeleteConversation(conversation.key),
-            },
-          ],
-        })}
-      />
+        menu={(conversation) => {
+          // Disable rename/delete when conversation has no Dify id
+          const hasDifyId = Boolean(conversationDifyIds?.[conversation.key]);
 
+          return {
+            items: [
+              {
+                label: 'Rename',
+                key: 'rename',
+                icon: <EditOutlined />,
+                disabled: !hasDifyId,
+                onClick: () => message.info('Rename feature coming soon!'),
+              },
+              {
+                label: 'Delete',
+                key: 'delete',
+                icon: <DeleteOutlined />,
+                danger: true,
+                disabled: !hasDifyId,
+                onClick: () => handleDeleteConversation(conversation.key),
+              },
+            ],
+          };
+        }}
+      />
     </div>
   );
 };

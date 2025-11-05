@@ -1,5 +1,4 @@
 import { createStyles } from 'antd-style';
-import { ChatInput } from '../components/ChatInput';
 
 export const useAppStyles = createStyles(({ token, css }) => {
   return {
@@ -122,8 +121,11 @@ export const useAppStyles = createStyles(({ token, css }) => {
       padding: 12px 8px;
       box-sizing: border-box;
       position: fixed;
-      left: 30%;
+      left: 33%;
       bottom:5%;
+
+      background: ${token.colorBgContainer}; /* ✅ optional: gives ChatGPT-like solid background */
+      z-index: 10; /* ✅ keeps it above scrolling messages */
       
       .ant-sender-content {
         padding-block: 0;

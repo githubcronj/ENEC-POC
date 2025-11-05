@@ -35,12 +35,22 @@ export interface DifyChatRequest {
   }>;
 }
 
-// Conversation types
+// ✅ UNIFIED Conversation type - combines both UI and API fields
 export interface ConversationItem {
+  // UI fields (required)
   key: string;
   label: string;
   group: string;
-  conversationId?: string; // Dify conversation ID
+  
+  // Dify API fields (optional)
+  conversationId?: string;
+  id?: string;
+  name?: string;
+  inputs?: Record<string, any>;
+  status?: string;
+  introduction?: string;
+  created_at?: number;
+  updated_at?: number;
 }
 
 // Chat message with status
@@ -59,17 +69,7 @@ export interface ChatMessage {
   }>;
 }
 
-// Conversation History Types
-export interface ConversationItem {
-  id: string;
-  name: string;
-  inputs: Record<string, any>;
-  status: string;
-  introduction: string;
-  created_at: number;
-  updated_at: number;
-}
-
+// Conversation message from API
 export interface ConversationMessageItem {
   id: string;
   conversation_id: string;

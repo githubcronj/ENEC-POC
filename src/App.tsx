@@ -123,20 +123,28 @@ const App: React.FC = () => {
   };
 
   // -------------------------------
-  // New conversation
-  // -------------------------------
-  const handleNewConversation = () => {
-    const now = dayjs().valueOf().toString();
-    const newConversation: ConversationItem = {
-      key: now,
-      label: `Conversation ${conversations.length + 1}`,
-      group: 'Today',
-    };
+// New conversation
+// -------------------------------
+const handleNewConversation = () => {
+  // 🧠 Check if current chat is empty — prevent creating new one
+  const currentMessages = messageHistory[currentConversation] || messages;
+  if (!currentMessages || currentMessages.length === 0) {
+    antMessage.warning('Current chat is empty. Please start chatting before creating a new one.');
+    return;
+  }
 
-    setConversations([newConversation, ...conversations]);
-    setCurrentConversation(now);
-    clearMessages();
+  const now = dayjs().valueOf().toString();
+  const newConversation: ConversationItem = {
+    key: now,
+    label: `Conversation ${conversations.length + 1}`,
+    group: 'Today',
   };
+
+  setConversations([newConversation, ...conversations]);
+  setCurrentConversation(now);
+  clearMessages();
+};
+
 
  // -------------------------------
 // Click history conversation
@@ -262,6 +270,8 @@ const handleConversationChange = async (key: string) => {
         onConversationChange={handleConversationChange}
         onNewConversation={handleNewConversation}
         onDeleteConversation={handleDeleteConversation}
+        messageHistory={messageHistory}
+        conversationDifyIds={conversationDifyIds} 
         styles={{
           sider: styles.sider,
           logo: styles.logo,
