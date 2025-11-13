@@ -62,6 +62,16 @@ export const useAppStyles = createStyles(({ token, css }) => {
       align-items: center;
       justify-content: space-between;
     `,
+
+    chatTitle: css`
+      .ant-welcome-icon {
+    height: auto;
+    display: flex;
+    }
+    h4{
+    font-size:30px !important;
+    }
+    `,
     
     // Chat area styles
     chat: css`
@@ -72,6 +82,7 @@ export const useAppStyles = createStyles(({ token, css }) => {
       flex-direction: column;
       padding-block: ${token.paddingLG}px;
       gap: 16px;
+      justify-content: center;
     `,
     
     chatPrompt: css`
@@ -85,12 +96,19 @@ export const useAppStyles = createStyles(({ token, css }) => {
       .ant-prompts-icon {
         color: #000000a6 !important;
       }
+      .ant-prompts-list {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+      }
     `,
     
     chatList: css`
       height:88%;
       flex: 1;
       overflow: auto;
+
+
     `,
     
     ChatInput: css`
@@ -110,7 +128,7 @@ export const useAppStyles = createStyles(({ token, css }) => {
     `,
     
     placeholder: css`
-      padding-top: 32px;
+      padding-top: 0;
     `,
     
     // Input area styles
@@ -120,9 +138,6 @@ export const useAppStyles = createStyles(({ token, css }) => {
       margin: 0 auto;
       padding: 12px 8px;
       box-sizing: border-box;
-      position: fixed;
-      left: 33%;
-      bottom:5%;
 
       background: ${token.colorBgContainer}; /* ✅ optional: gives ChatGPT-like solid background */
       z-index: 10; /* ✅ keeps it above scrolling messages */

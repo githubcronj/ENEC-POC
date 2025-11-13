@@ -1,173 +1,141 @@
 import React from 'react';
-import {
-  HeartOutlined,
-  SmileOutlined,
-  CommentOutlined,
-  PaperClipOutlined,
-} from '@ant-design/icons';
 import { Prompts, Welcome } from '@ant-design/x';
-import {  Flex, Space } from 'antd';
+import { Flex } from 'antd';
 import logo from '../assets/enec-logo.png';
+import {
+  SafetyOutlined,
+  TeamOutlined,
+  CheckCircleOutlined,
+  LeftOutlined,
+} from '@ant-design/icons';
+import Title from 'antd/es/typography/Title';
+import { Typewriter } from 'react-simple-typewriter';
 
 interface ChatWelcomeProps {
   onPromptClick: (text: string) => void;
   styles: {
+    chatTitle: string | undefined;
     placeholder: string;
     chatPrompt: string;
   };
 }
 
-const HOT_TOPICS = {
-  key: '1',
-  label: 'Quick Start',
-  children: [
-    {
-      key: '1-1',
-      description: 'What can you help me with?',
-      icon: <span style={{ color: '#f93a4a', fontWeight: 700 }}>1</span>,
-    },
-    {
-      key: '1-2',
-      description: 'Tell me about your capabilities',
-      icon: <span style={{ color: '#ff6565', fontWeight: 700 }}>2</span>,
-    },
-    {
-      key: '1-3',
-      description: 'Help me get started',
-      icon: <span style={{ color: '#ff8f1f', fontWeight: 700 }}>3</span>,
-    },
-    {
-      key: '1-4',
-      description: 'Show me some examples',
-      icon: <span style={{ color: '#00000040', fontWeight: 700 }}>4</span>,
-    },
-  ],
-};
-
-const FEATURE_GUIDE = {
-  key: '2',
-  label: 'Features',
-  children: [
-    {
-      key: '2-1',
-      icon: <HeartOutlined />,
-      label: 'Understanding',
-      description: 'AI understands your needs and provides solutions',
-    },
-    {
-      key: '2-2',
-      icon: <SmileOutlined />,
-      label: 'Friendly',
-      description: 'Natural and engaging conversation',
-    },
-    {
-      key: '2-3',
-      icon: <CommentOutlined />,
-      label: 'Responsive',
-      description: 'Quick and helpful responses',
-    },
-    {
-      key: '2-4',
-      icon: <PaperClipOutlined />,
-      label: 'Context-aware',
-      description: 'Remembers conversation history',
-    },
-  ],
-};
+const HOT_TOPICS = [
+  {
+    key: '1',
+    icon: <SafetyOutlined style={{ color: '#FF6B35' }} />,
+    label: 'Safety & Security',
+    description: 'What are ENEC safety and security requirements?',
+  },
+  {
+    key: '2',
+    icon: <TeamOutlined style={{ color: '#004E89' }} />,
+    label: 'Career & Development',
+    description: 'Tell me about Emiratization and career opportunities',
+  },
+  {
+    key: '3',
+    icon: <CheckCircleOutlined style={{ color: '#7209B7' }} />,
+    label: 'Policies & Compliance',
+    description: 'What are ENEC governance and compliance policies?',
+  },
+  {
+    key: '4',
+    icon: <LeftOutlined style={{ color: '#06A77D' }} />,
+    label: 'Sustainability',
+    description: 'How is ENEC committed to clean nuclear energy?',
+  },
+];
 
 export const ChatWelcome: React.FC<ChatWelcomeProps> = ({
-  onPromptClick,
   styles,
 }) => {
   return (
-    <Space
-      direction="vertical"
-      size={8}
-      style={{ paddingInline: 'calc(calc(100% - 700px) / 2)'}}
+    <Flex
+
+      align="center"
+      justify="center"
+      style={{
+        paddingInline: 'calc(calc(100% - 700px) / 2)',
+        gap: '32px',
+      }}
       className={styles.placeholder}
     >
+      {/* Welcome Message - Top/Center */}
       <Welcome
         variant="borderless"
-        style={{ paddingBottom: '15px'}}
-        icon={<img src={logo} alt="logo" style={{ borderRadius: '8px', width: 'auto', height:'auto' , objectFit: 'cover' }} />}
-        title="Hello, I'm your ENEC AI Assistant"
-        description="Smart, responsive, and ready to help—ask me anything."
+        className={styles.chatTitle}
+        style={{ paddingBottom: '15px', display: 'flex', alignItems: 'center' }}
+        icon={
+          <img
+            src={logo}
+            alt="logo"
+            style={{
+              width: '24px',
+              height: '24px',
+              objectFit: 'cover',
+            }}
+          />
+        }
+        title={
+          <Title
+            level={2}
+            style={{
+              margin: 0,
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Typewriter
+              words={['Hello Nisarg, how can I help you today?']}
+              loop={false}
+              cursor
+              cursorStyle="|"
+              typeSpeed={50}
+              deleteSpeed={30}
+              delaySpeed={1000}
+            />
+          </Title>
+        }
       />
+    </Flex>
+  );
+};
 
-      <Flex gap={12} style={{ width: '100%' }}>
-        <Prompts
-          items={[HOT_TOPICS]}
-          styles={{
-            list: { height: 'auto' },
-            item: {
-              flex: 1,
-              backgroundImage: 'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
-              borderRadius: 8,
-              border: 'none',
-              padding: '8px',
-            },
-            subItem: { padding: '4px', background: 'transparent', fontSize: '12px' },
-          }}
-          onItemClick={(info) => {
-            onPromptClick(info.data.description as string);
-          }}
-          className={styles.chatPrompt}
-        />
-
-        <Prompts
-          items={[FEATURE_GUIDE]}
-          styles={{
-            item: {
-              flex: 1,
-              backgroundImage: 'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
-              borderRadius: 8,
-              border: 'none',
-              padding: '8px',
-            },
-            subItem: { background: '#ffffffa6', padding: '4px', fontSize: '12px' },
-          }}
-          onItemClick={(info) => {
-            onPromptClick(info.data.description as string);
-          }}
-          className={styles.chatPrompt}
-        />
-      </Flex>
-      {/* <Flex gap={16}>
-            <Prompts
-              items={[HOT_TOPICS]}
-              styles={{
-                list: { height: '100%' },
-                item: {
-                  flex: 1,
-                  backgroundImage: 'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
-                  borderRadius: 12,
-                  border: 'none',
-                },
-                subItem: { padding: 0, background: 'transparent' },
-              }}
-              onItemClick={(info) => {
-                onPromptClick(info.data.description as string);
-              }}
-              className={styles.chatPrompt}
-            />
-
-            <Prompts
-              items={[FEATURE_GUIDE]}
-              styles={{
-                item: {
-                  flex: 1,
-                  backgroundImage: 'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
-                  borderRadius: 12,
-                  border: 'none',
-                },
-                subItem: { background: '#ffffffa6' },
-              }}
-              onItemClick={(info) => {
-                onPromptClick(info.data.description as string);
-              }}
-              className={styles.chatPrompt}
-            />
-          </Flex> */}
-    </Space>
+// 🆕 New Separate Component for Prompts
+export const ChatPrompts: React.FC<{
+  onPromptClick: (text: string) => void;
+  className: string;
+}> = ({ onPromptClick, className }) => {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: '700px',
+        margin: '0 auto',
+      }}
+    >
+      <Prompts
+        items={HOT_TOPICS}
+        styles={{
+          list: { height: 'auto' },
+          item: {
+            flex: 1,
+            backgroundImage:
+              'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
+            borderRadius: 4,
+            border: 'none',
+            padding: '10px',
+            width: 'auto',
+          },
+        }}
+        onItemClick={(info) => {
+          onPromptClick(info.data.description as string);
+        }}
+        className={className}
+      />
+    </div>
   );
 };
