@@ -5,6 +5,7 @@ import { useDifyChat } from './hooks/useDifyChat';
 import { ChatSidebar } from './components/ChatSidebar';
 import { ChatMessageList } from './components/ChatMessageList';
 import { ChatWelcome } from './components/ChatWelcome';
+import { ChatPrompts } from './components/ChatWelcome';
 import { ChatInput } from './components/ChatInput';
 import { useAppStyles } from './styles/appStyles';
 import { DifyService } from './services/difyService';
@@ -106,10 +107,10 @@ const App: React.FC = () => {
               prev.map((conv) =>
                 conv.key === currentConversation
                   ? {
-                      ...conv,
-                      label: preview + (preview.length >= 50 ? '...' : ''),
-                      conversationId: newDifyId,
-                    }
+                    ...conv,
+                    label: preview + (preview.length >= 50 ? '...' : ''),
+                    conversationId: newDifyId,
+                  }
                   : conv
               )
             );
@@ -123,88 +124,88 @@ const App: React.FC = () => {
   };
 
   // -------------------------------
-// New conversation
-// -------------------------------
-const handleNewConversation = () => {
-  // 🧠 Check if current chat is empty — prevent creating new one
-  const currentMessages = messageHistory[currentConversation] || messages;
-  if (!currentMessages || currentMessages.length === 0) {
-    antMessage.warning('Current chat is empty. Please start chatting before creating a new one.');
-    return;
-  }
+  // New conversation
+  // -------------------------------
+  const handleNewConversation = () => {
+    // 🧠 Check if current chat is empty — prevent creating new one
+    const currentMessages = messageHistory[currentConversation] || messages;
+    if (!currentMessages || currentMessages.length === 0) {
+      antMessage.warning('Current chat is empty. Please start chatting before creating a new one.');
+      return;
+    }
 
-  const now = dayjs().valueOf().toString();
-  const newConversation: ConversationItem = {
-    key: now,
-    label: `Conversation ${conversations.length + 1}`,
-    group: 'Today',
+    const now = dayjs().valueOf().toString();
+    const newConversation: ConversationItem = {
+      key: now,
+      label: `Conversation ${conversations.length + 1}`,
+      group: 'Today',
+    };
+
+    setConversations([newConversation, ...conversations]);
+    setCurrentConversation(now);
+    clearMessages();
   };
 
-  setConversations([newConversation, ...conversations]);
-  setCurrentConversation(now);
-  clearMessages();
-};
 
+  // -------------------------------
+  // Click history conversation
+  // -------------------------------
+  const handleConversationChange = async (key: string) => {
+    if (loading) abort();
+    setCurrentConversation(key);
 
- // -------------------------------
-// Click history conversation
-// -------------------------------
-const handleConversationChange = async (key: string) => {
-  if (loading) abort();
-  setCurrentConversation(key);
+    // 🧠 If the conversation is new (not yet linked to a Dify ID)
+    if (!conversationDifyIds[key]) {
+      console.log('🆕 Local-only conversation, skipping API fetch.');
+      clearMessages();
+      return;
+    }
 
-  // 🧠 If the conversation is new (not yet linked to a Dify ID)
-  if (!conversationDifyIds[key]) {
-    console.log('🆕 Local-only conversation, skipping API fetch.');
-    clearMessages();
-    return;
-  }
+    // ✅ If messages are already cached in memory
+    if (messageHistory[key]) {
+      setMessages(messageHistory[key]);
+      return;
+    }
 
-  // ✅ If messages are already cached in memory
-  if (messageHistory[key]) {
-    setMessages(messageHistory[key]);
-    return;
-  }
+    const difyConvId = conversationDifyIds[key] || key;
+    if (!difyConvId) {
+      clearMessages();
+      return;
+    }
 
-  const difyConvId = conversationDifyIds[key] || key;
-  if (!difyConvId) {
-    clearMessages();
-    return;
-  }
+    try {
+      const response = await difyService.getMessages(difyConvId, difyService.userId);
+      const fetchedMessages = Array.isArray(response) ? response : [];
 
-  try {
-    const response = await difyService.getMessages(difyConvId, difyService.userId);
-    const fetchedMessages = Array.isArray(response) ? response : [];
+      const formatted = fetchedMessages.flatMap((msg: any, index: number) => {
+        const chatParts: any[] = [];
 
-    const formatted = fetchedMessages.flatMap((msg: any, index: number) => {
-      const chatParts: any[] = [];
+        if (msg.query) {
+          chatParts.push({
+            id: `${msg.id}-q-${index}`,
+            message: { role: 'user', content: msg.query },
+            status: 'success',
+          });
+        }
 
-      if (msg.query) {
-        chatParts.push({
-          id: `${msg.id}-q-${index}`,
-          message: { role: 'user', content: msg.query },
-          status: 'success',
-        });
-      }
+        if (msg.answer) {
+          chatParts.push({
+            id: `${msg.id}-a-${index}`,
+            message: { role: 'assistant', content: msg.answer },
+            status: 'success',
+          });
+        }
 
-      if (msg.answer) {
-        chatParts.push({
-          id: `${msg.id}-a-${index}`,
-          message: { role: 'assistant', content: msg.answer },
-          status: 'success',
-        });
-      }
+        return chatParts;
+      });
 
-      return chatParts;
-    });
-
-    setMessages(formatted);
-    setMessageHistory((prev) => ({ ...prev, [key]: formatted }));
-  } catch (error) {
-    console.error('❌ Error loading conversation messages:', error);
-    antMessage.error('Failed to load chat history');
-  }
-};
+      setMessages(formatted);
+      setMessageHistory((prev) => ({ ...prev, [key]: formatted }));
+    } catch (error) {
+      console.error('❌ Error loading conversation messages:', error);
+      antMessage.error('Failed to load chat history');
+    }
+  };
 
   // -------------------------------
   // Delete conversation
@@ -271,7 +272,7 @@ const handleConversationChange = async (key: string) => {
         onNewConversation={handleNewConversation}
         onDeleteConversation={handleDeleteConversation}
         messageHistory={messageHistory}
-        conversationDifyIds={conversationDifyIds} 
+        conversationDifyIds={conversationDifyIds}
         styles={{
           sider: styles.sider,
           logo: styles.logo,
@@ -294,6 +295,7 @@ const handleConversationChange = async (key: string) => {
           <ChatWelcome
             onPromptClick={handleSendMessage}
             styles={{
+              chatTitle: styles.chatTitle,
               placeholder: styles.placeholder,
               chatPrompt: styles.chatPrompt,
             }}
@@ -311,6 +313,11 @@ const handleConversationChange = async (key: string) => {
             ChatInput: styles.ChatInput,
           }}
         />
+
+        {/* 🆕 Show prompts only when no messages */}
+        {messages.length === 0 && (
+          <ChatPrompts onPromptClick={handleSendMessage} className={styles.chatPrompt} />
+        )}
       </div>
     </div>
   );
