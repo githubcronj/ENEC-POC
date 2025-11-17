@@ -10,7 +10,7 @@ import { ChatInput } from './components/ChatInput';
 import { useAppStyles } from './styles/appStyles';
 import { DifyService } from './services/difyService';
 import { DIFY_CONFIG } from './config/dify.config';
-import type { ConversationItem } from './types';
+import type { ConversationItem, DifyHistoryMessage } from './types';
 
 const DEFAULT_CONVERSATIONS: ConversationItem[] = [
   {
@@ -177,7 +177,7 @@ const App: React.FC = () => {
       const response = await difyService.getMessages(difyConvId, difyService.userId);
       const fetchedMessages = Array.isArray(response) ? response : [];
 
-      const formatted = fetchedMessages.flatMap((msg: any, index: number) => {
+      const formatted = fetchedMessages.flatMap((msg: DifyHistoryMessage, index: number) => {
         const chatParts: any[] = [];
 
         if (msg.query) {
@@ -293,11 +293,15 @@ const App: React.FC = () => {
           />
         ) : (
           <ChatWelcome
-            onPromptClick={handleSendMessage}
             styles={{
               chatTitle: styles.chatTitle,
               placeholder: styles.placeholder,
               chatPrompt: styles.chatPrompt,
+              welcomeContainer: styles.welcomeContainer,
+              welcomeContent: styles.welcomeContent,
+              welcomeLogo: styles.welcomeLogo,
+              welcomeTitle: styles.welcomeTitle,
+              promptsContainer: styles.promptsContainer,
             }}
           />
         )}
@@ -316,7 +320,7 @@ const App: React.FC = () => {
 
         {/* 🆕 Show prompts only when no messages */}
         {messages.length === 0 && (
-          <ChatPrompts onPromptClick={handleSendMessage} className={styles.chatPrompt} />
+          <ChatPrompts onPromptClick={handleSendMessage} className={styles.chatPrompt} containerClassName={styles.promptsContainer} />
         )}
       </div>
     </div>

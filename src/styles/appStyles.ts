@@ -65,12 +65,12 @@ export const useAppStyles = createStyles(({ token, css }) => {
 
     chatTitle: css`
       .ant-welcome-icon {
-    height: auto;
-    display: flex;
-    }
-    h4{
-    font-size:30px !important;
-    }
+        height: auto;
+        display: flex;
+      }
+      h4 {
+        font-size: 30px !important;
+      }
     `,
     
     // Chat area styles
@@ -104,11 +104,9 @@ export const useAppStyles = createStyles(({ token, css }) => {
     `,
     
     chatList: css`
-      height:88%;
+      height: 88%;
       flex: 1;
       overflow: auto;
-
-
     `,
     
     ChatInput: css`
@@ -131,6 +129,37 @@ export const useAppStyles = createStyles(({ token, css }) => {
       padding-top: 0;
     `,
     
+    welcomeContainer: css`
+      padding-inline: calc(calc(100% - 700px) / 2);
+      gap: 32px;
+    `,
+    
+    welcomeContent: css`
+      padding-bottom: 15px;
+      display: flex;
+      align-items: center;
+    `,
+    
+    welcomeLogo: css`
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+    `,
+    
+    welcomeTitle: css`
+      margin: 0;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    `,
+    
+    promptsContainer: css`
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    `,
+    
     // Input area styles
     sender: css`
       width: 100%;
@@ -139,8 +168,8 @@ export const useAppStyles = createStyles(({ token, css }) => {
       padding: 12px 8px;
       box-sizing: border-box;
 
-      background: ${token.colorBgContainer}; /* ✅ optional: gives ChatGPT-like solid background */
-      z-index: 10; /* ✅ keeps it above scrolling messages */
+      background: ${token.colorBgContainer};
+      z-index: 10;
       
       .ant-sender-content {
         padding-block: 0;
@@ -167,3 +196,16 @@ export const useAppStyles = createStyles(({ token, css }) => {
     `,
   };
 });
+
+export const PROMPTS_STYLES = {
+  list: { height: 'auto' },
+  item: {
+    flex: 1,
+    backgroundImage:
+      'linear-gradient(123deg, #e5f4ff 0%, #efe7ff 100%)',
+    borderRadius: 4,
+    border: 'none',
+    padding: '10px',
+    width: 'auto',
+  },
+};
