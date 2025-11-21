@@ -94,3 +94,9 @@ export interface AttachmentFile {
   status: string;
   url?: string;
 }
+
+export interface DifyHistoryMessage {
+  id: string;
+  query?: string;
+  answer?: string;
+}
